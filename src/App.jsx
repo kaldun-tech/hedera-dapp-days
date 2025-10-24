@@ -3,6 +3,7 @@ import MyGroup from "./components/MyGroup.jsx";
 import walletConnectFcn from "./components/hedera/walletConnect.js";
 import tokenCreateFcn from "./components/hedera/tokenCreate.js";
 import tokenMintFcn from "./components/hedera/tokenMint.js";
+import topicCreateFcn from "./components/hedera/topicCreate.js";
 import contractDeployFcn from "./components/hedera/contractDeploy.js";
 import contractExecuteFcn from "./components/hedera/contractExecute.js";
 import "./styles/App.css";
@@ -13,6 +14,7 @@ function App() {
 	const [tokenId, setTokenId] = useState();
 	const [tokenSupply, setTokenSupply] = useState();
 	const [contractId, setContractId] = useState();
+	const [topicTextStr, setTopicTextStr] = useState();
 
 	const [connectTextSt, setConnectTextSt] = useState("🔌 Connect here...");
 	const [createTextSt, setCreateTextSt] = useState("");
@@ -23,6 +25,7 @@ function App() {
 	const [connectLinkSt, setConnectLinkSt] = useState("");
 	const [createLinkSt, setCreateLinkSt] = useState("");
 	const [mintLinkSt, setMintLinkSt] = useState("");
+	const [topicLinkSt, setTopicLinkSt] = useState("");
 	const [contractLinkSt, setContractLinkSt] = useState();
 	const [trasnferLinkSt, setTransferLinkSt] = useState();
 
@@ -72,6 +75,12 @@ function App() {
 			const txId = prettify(txIdRaw);
 			setMintLinkSt(`https://hashscan.io/testnet/transaction/${txId}`);
 		}
+	}
+
+	async function topicCreate() {
+		const [topicId] = await topicCreateFcn(walletData, accountId);
+		setTopicTextStr(`Successfully created topic with ID: ${topicId} ✅`);
+		setTopicLinkSt(`https://hashscan.io/testnet/transaction/${topicId}`);
 	}
 
 	async function contractDeploy() {
@@ -128,6 +137,13 @@ function App() {
 				buttonLabel={"Mint 100 New Tokens"}
 				text={mintTextSt}
 				link={mintLinkSt}
+			/>
+
+			<MyGroup
+				fcn={topicCreate}
+				buttonLabel={"Create New Topic"}
+				text={topicTextStr}
+				link={topicLinkSt}
 			/>
 
 			<MyGroup
