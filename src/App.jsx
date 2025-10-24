@@ -4,6 +4,7 @@ import walletConnectFcn from "./components/hedera/walletConnect.js";
 import tokenCreateFcn from "./components/hedera/tokenCreate.js";
 import tokenMintFcn from "./components/hedera/tokenMint.js";
 import topicCreateFcn from "./components/hedera/topicCreate.js";
+import topicMessageFcn from "./components/hedera/topicMessage.js";
 import contractDeployFcn from "./components/hedera/contractDeploy.js";
 import contractExecuteFcn from "./components/hedera/contractExecute.js";
 import "./styles/App.css";
@@ -12,10 +13,10 @@ function App() {
 	const [walletData, setWalletData] = useState();
 	const [accountId, setAccountId] = useState();
 	const [tokenId, setTokenId] = useState();
-	const [tokenSupply, setTokenSupply] = useState();
+	const [setTokenSupply] = useState();
 	const [contractId, setContractId] = useState();
 	const [topicTextStr, setTopicTextStr] = useState();
-
+	const [topicMsgTextStr, setTopicMsgTextStr] = useState();
 	const [connectTextSt, setConnectTextSt] = useState("🔌 Connect here...");
 	const [createTextSt, setCreateTextSt] = useState("");
 	const [mintTextSt, setMintTextSt] = useState("");
@@ -26,6 +27,7 @@ function App() {
 	const [createLinkSt, setCreateLinkSt] = useState("");
 	const [mintLinkSt, setMintLinkSt] = useState("");
 	const [topicLinkSt, setTopicLinkSt] = useState("");
+	const [topicMsgLinkSt, setTopicMsgLinkSt] = useState("");
 	const [contractLinkSt, setContractLinkSt] = useState();
 	const [trasnferLinkSt, setTransferLinkSt] = useState();
 
@@ -78,23 +80,31 @@ function App() {
 	}
 
 	async function topicCreate() {
+		console.log(`- Creating topic...`);
 		const [topicId] = await topicCreateFcn(walletData, accountId);
 		setTopicTextStr(`Successfully created topic with ID: ${topicId} ✅`);
-		setTopicLinkSt(`https://hashscan.io/testnet/transaction/${topicId}`);
+		setTopicLinkSt(`https://hashscan.io/testnet/topic/${topicId}`);
+	}
+
+	async function topicMessage() {
+		console.log(`- Sending topic message...`);
+		const [topicMessage] = await topicMessageFcn(walletData, accountId);
+		setTopicMsgTextStr(`New message: ${topicMessage} ✅`);
+		setTopicMsgLinkSt(`https://hashscan.io/testnet/topic/${topicMessage}`);
 	}
 
 	async function contractDeploy() {
 		if (tokenId === undefined) {
 			setContractTextSt("🛑 Create a token first! 🛑");
-		} else if (contractId !== undefined) {
-			setContractTextSt(`You already have contract ${contractId} ✅`);
-		} else {
+		} else if (contractId) {
 			const [cId, txIdRaw] = await contractDeployFcn(walletData, accountId, tokenId);
 			setContractId(cId);
 			setContractTextSt(`Successfully deployed smart contract with ID: ${cId} ✅`);
 			setTransferTextSt();
 			const txId = prettify(txIdRaw);
 			setContractLinkSt(`https://hashscan.io/testnet/transaction/${txId}`);
+		} else {
+			setContractTextSt(`You already have contract ${contractId} ✅`);
 		}
 	}
 
@@ -144,6 +154,13 @@ function App() {
 				buttonLabel={"Create New Topic"}
 				text={topicTextStr}
 				link={topicLinkSt}
+			/>
+
+			<MyGroup
+				fcn={topicMessage}
+				buttonLabel={"Send Topic Message"}
+				text={topicMsgTextStr}
+				link={topicMsgLinkSt}
 			/>
 
 			<MyGroup
