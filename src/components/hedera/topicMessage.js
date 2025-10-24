@@ -1,4 +1,4 @@
-import { TopicMessageTransaction } from "@hashgraph/sdk";
+import { TopicMessageSubmitTransaction } from "@hashgraph/sdk";
 
 async function topicMessageFcn(walletData, accountId) {
 	console.log(`\n=======================================`);
@@ -9,7 +9,7 @@ async function topicMessageFcn(walletData, accountId) {
 	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
 	const signer = hashconnect.getSigner(provider);
 
-	const topicMessageTx = new TopicMessageTransaction()
+	const topicMessageTx = new TopicMessageSubmitTransaction()
 		.setTopicMemo("Hello World!")
 		.setTopicId(saveData.topic)
 		.freezeWithSigner(signer);
